@@ -2,10 +2,7 @@ const FAQService = require('../services/faq.service');
 
 const getAllFAQS = async(req,res)=>{
     const FAQS = await FAQService.getAllFAQS();
-    res.json({
-        status: 'success',
-        data: FAQS
-    });
+    res.json(FAQS);
 }
 postNewFAQ = async (req,res)=>{
     if(Object.keys(req.body).length === 0){
