@@ -5,11 +5,11 @@ const ticketsSchema  =  new mongoose.Schema({
         ref: 'Client',
         require: true
     },
-    // category:{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Categories',
-    //     require: true
-    // },
+    category:{
+        type: mongoose.Schema.Types.String,
+        ref: 'Categories',
+        require: true
+    },
     title:{
         type: String,
         required: true 

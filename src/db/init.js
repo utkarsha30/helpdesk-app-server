@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 require('../models/client');
 require('../models/tickets');
+require('../models/faq');
+require('../models/categories');
 const connect = async()=>{
     try{
-        await mongoose.connect(`mongodb://localhost:27017/HelpDeskDb`);
+        console.log(process.env.MONGO_URL);
+        await mongoose.connect(process.env.MONGO_URL);
         console.log('Connected to db');
     }
     catch(error){
