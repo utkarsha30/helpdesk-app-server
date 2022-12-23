@@ -1,50 +1,50 @@
-const CategoriesService = require('../services/categories.service');
-
-const getCategoryById = async(req,res)=>{
-    const {id} = req.params;
-    try{
-        const match = await CategoriesService.getCategoryById(id);
-        if(!match){
-            res.status(404).json({
-                status: 'error',
-                message: 'Category not found'
-            });
-        }
-        res.json({
-            status:'success',
-            data : match
-        });
+const CategoriesService = require("../services/categories.service");
+const { Errors } = require("../constants");
+const getAllCategories = async (req, res, next) => {
+  try {
+    const Categories = await CategoriesService.getAllCategories();
+    res.json(Categories);
+  } catch (error) {
+    next(error);
+  }
+};
+const getCategoryById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const match = await CategoriesService.getCategoryById(id);
+    if (!match) {
+      const error = new Error(`Category with ${id} does not exist`);
+      error.name = Errors.NotFound;
+      return next(error);
     }
-    catch(error){
-        return res.status(404).json({
-            status: 'error',
-            message: 'API not supported'
-        });
-    }
-}
-const postNewCategory = async (req,res)=>{
-    if(Object.keys(req.body).length === 0){
-        return res.status(400).json({
-            status: 'error',
-            message: 'Request body missing'
-        });
-    }
-    try{
-        const newCategory = await CategoriesService.postNewCategory(req.body);
-        console.log(newCategory);
-    res.status(201).json({
-        status: 201,
-        data : newCategory
+    res.json({
+      status: "success",
+      data: match,
     });
-    }
-    catch(error){
-        return res.status(404).json({
-            status: 'error',
-            message: 'API not supported'
-        });
-    }   
-}
+  } catch (error) {
+    next(error);
+  }
+};
+const postNewCategory = async (req, res, next) => {
+  if (Object.keys(req.body).length === 0) {
+    const error = new Error(
+      `Request body is missing, and needs to have for creating new FAQ`
+    );
+    error.name = Errors.BadRequest;
+    return next(error);
+  }
+  try {
+    const newCategory = await CategoriesService.postNewCategory(req.body);
+    res.status(201).json({
+      status: "success",
+      data: newCategory,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
-    postNewCategory,
-    getCategoryById
-}
+  getAllCategories,
+  postNewCategory,
+  getCategoryById,
+};

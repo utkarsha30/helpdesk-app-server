@@ -1,32 +1,32 @@
-const FAQService = require('../services/faq.service');
-
-const getAllFAQS = async(req,res)=>{
+const FAQService = require("../services/faq.service");
+const { Errors } = require("../constants");
+const getAllFAQS = async (req, res, next) => {
+  try {
     const FAQS = await FAQService.getAllFAQS();
     res.json(FAQS);
-}
-postNewFAQ = async (req,res)=>{
-    if(Object.keys(req.body).length === 0){
-        return res.status(400).json({
-            status: 'error',
-            message: 'Request body missing'
-        });
-    }
-    try{
-        const newFAQ = await FAQService.postNewFAQ(req.body);
+  } catch (error) {
+    next(error);
+  }
+};
+postNewFAQ = async (req, res, next) => {
+  if (Object.keys(req.body).length === 0) {
+    const error = new Error(
+      `Request body is missing, and needs to have for creating new FAQ`
+    );
+    error.name = Errors.BadRequest;
+    return next(error);
+  }
+  try {
+    const newFAQ = await FAQService.postNewFAQ(req.body);
     res.status(201).json({
-        status: 201,
-        data : newFAQ
+      status: "success",
+      data: newFAQ,
     });
-    }
-    catch(error){
-        return res.status(404).json({
-            status: 'error',
-            message: 'API not supported'
-        });
-    }
-    
-}
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
-    postNewFAQ,
-    getAllFAQS
-}
+  postNewFAQ,
+  getAllFAQS,
+};
