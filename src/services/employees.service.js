@@ -5,9 +5,7 @@ const getEmployeeById = (_id) => {
   return Employee.findById(_id);
 };
 const getAllAgentEmployees = () => {
-  const result = Employee.find({ role: "agent" });
-  console.log(result);
-  return result;
+  return Employee.find({ role: "agent" });
 };
 const postNewEmployeeDetails = (bodyDetails) => {
   return Employee.create(bodyDetails);
