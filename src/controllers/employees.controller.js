@@ -19,7 +19,7 @@ const getCategoryById = async (req, res, next) => {
 };
 const getAllAgentEmployees = async (req, res, next) => {
   try {
-    const allAgents = EmployeesService.getAllAgentEmployees;
+    const allAgents = await EmployeesService.getAllAgentEmployees();
     res.json(allAgents);
   } catch (error) {
     next(error);
