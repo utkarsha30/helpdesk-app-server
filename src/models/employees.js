@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const employeeSchema = new mongoose.Schema(
   {
     name: {
@@ -40,5 +41,37 @@ employeeSchema.virtual("tickets", {
   ref: "Tickets",
   localField: "_id",
   foreignField: "agent", // the field in the other collection (Topic) that references a document in this collection (Workshop)
+});
+
+// decides the "Strength" of the salt (should not be higher as salting will take long time and occupy CPU time (blocking) - nothing else will execute in the app in that time)
+const SALT_FACTOR = 10;
+console.log(this); // global / window
+
+employeeSchema.pre("save", function (done) {
+  // DO NOT use arrow function here
+  const user = this; // const user -> new User()
+
+  if (!user.isModified("password")) {
+    done();
+    return;
+  }
+
+  // genSalt() is async
+  bcrypt.genSalt(SALT_FACTOR, function (err, salt) {
+    if (err) {
+      return done(err); // Mongoose will not insert the user document
+    }
+
+    bcrypt.hash(user.password, salt, function (err, hashedPassword) {
+      if (err) {
+        return done(err);
+      }
+
+      user.password = hashedPassword;
+      done(); // pass no arguments to done() to signify success
+    });
+  });
+
+  console.log("executes immediately");
 });
 mongoose.model("Employee", employeeSchema);
