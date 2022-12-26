@@ -1,6 +1,6 @@
 const EmployeesService = require("../services/employees.service");
 const { Errors } = require("../constants");
-const getCategoryById = async (req, res, next) => {
+const getEmployeeById = async (req, res, next) => {
   const { id } = req.params;
   try {
     const match = await EmployeesService.getEmployeeById(id);
@@ -35,16 +35,18 @@ const postNewEmployeeDetails = async (req, res, next) => {
   }
   try {
     const newEmployee = await EmployeesService.postNewEmployeeDetails(req.body);
+    const newEmployeeObj = newEmployee.toObject();
+    delete newEmployeeObj.password;
     res.status(201).json({
       status: "success",
-      data: newEmployee,
+      data: newEmployeeObj,
     });
   } catch (error) {
     next(error);
   }
 };
 module.exports = {
-  getCategoryById,
+  getEmployeeById,
   getAllAgentEmployees,
   postNewEmployeeDetails,
 };

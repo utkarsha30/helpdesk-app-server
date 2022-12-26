@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const Client = mongoose.model("Client");
 const getAllClients = () => {
   return Client.find();
@@ -9,8 +10,24 @@ const getClientById = (_id) => {
 const postClientDetails = (bodyDetails) => {
   return Client.create(bodyDetails);
 };
+const validateUser = async (loginUser) => {
+  const user = await Client.findOne({
+    email: loginUser.email,
+  });
+  if (!user) {
+    return null;
+  }
+  const isMatch = await bcrypt.compare(loginUser.password, user.password);
+
+  if (!isMatch) {
+    return null;
+  }
+
+  return user;
+};
 module.exports = {
   getAllClients,
   postClientDetails,
   getClientById,
+  validateUser,
 };
