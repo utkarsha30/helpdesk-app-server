@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const Employee = mongoose.model("Employee");
 
 const getEmployeeById = (_id) => {
@@ -10,9 +11,25 @@ const getAllAgentEmployees = () => {
 const postNewEmployeeDetails = (bodyDetails) => {
   return Employee.create(bodyDetails);
 };
+const validateUser = async (loginUser) => {
+  const user = await Employee.findOne({
+    email: loginUser.email,
+  });
+  if (!user) {
+    return null;
+  }
+  const isMatch = await bcrypt.compare(loginUser.password, user.password);
+
+  if (!isMatch) {
+    return null;
+  }
+
+  return user;
+};
 
 module.exports = {
   getEmployeeById,
   getAllAgentEmployees,
   postNewEmployeeDetails,
+  validateUser,
 };
