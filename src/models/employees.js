@@ -18,7 +18,7 @@ const employeeSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      emu: ["admin", "agent"],
+      enum: ["admin", "agent"],
     },
   },
   {

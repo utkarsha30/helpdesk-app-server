@@ -1,9 +1,16 @@
 const { Router } = require("express");
 const ClientCtrl = require("../controllers/client.controller");
+const { authenticate, authorize } = require("../middleware/auth");
 const router = Router();
 
-router.get("/", ClientCtrl.getAllClients);
-router.get("/:id", ClientCtrl.getClientById);
+router.get(
+  "/allclients",
+  authenticate,
+  authorize("admin"),
+  ClientCtrl.getAllClients
+);
+router.get("/:id", authenticate, authorize("client"), ClientCtrl.getClientById);
+
 router.post("/register", ClientCtrl.postClientDetails);
 router.post("/login", ClientCtrl.postClientLogin);
 module.exports = router;

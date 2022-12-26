@@ -18,22 +18,22 @@ const ticketsSchema = new mongoose.Schema({
   },
   priority: {
     type: String,
+    default: "low",
     enum: ["high", "medium", "low"],
   },
   client: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Client",
-    require: true,
+    required: true,
   },
   category: {
     type: mongoose.Schema.Types.String,
     ref: "Categories",
-    require: true,
+    required: true,
   },
   agent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",
-    require: true,
   },
   comment: [
     {
