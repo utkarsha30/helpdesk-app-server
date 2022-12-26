@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const EmployeesService = require("../services/employees.service");
 const { Errors } = require("../constants");
 const getEmployeeById = async (req, res, next) => {
@@ -45,8 +46,53 @@ const postNewEmployeeDetails = async (req, res, next) => {
     next(error);
   }
 };
+const postEmployeeLogin = async (req, res, next) => {
+  if (Object.keys(req.body).length === 0) {
+    const error = new Error(
+      `Request body is missing, and needs to have login details`
+    );
+    error.name = Errors.BadRequest;
+    return next(error);
+  }
+  try {
+    const user = await EmployeesService.validateUser(req.body);
+    if (!user) {
+      const error = new Error(`Invalid Credentials`);
+      error.name = Errors.Unauthorized;
+      return next(error);
+    }
+    //generate JWT
+    const claims = {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
+    jwt.sign(claims, process.env.JWT_SECRET, (err, token) => {
+      if (err) {
+        err.name = Errors.InternalServerError;
+        return next(err);
+      }
+
+      res.json({
+        status: "success",
+        data: {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          token,
+        },
+      });
+    });
+  } catch (error) {
+    const err = new Error("Something went wrong during login");
+    err.name = Errors.InternalServerError;
+    return next(err);
+  }
+};
 module.exports = {
   getEmployeeById,
   getAllAgentEmployees,
   postNewEmployeeDetails,
+  postEmployeeLogin,
 };
