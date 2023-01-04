@@ -16,10 +16,7 @@ const errorHandler = (err, req, res, next) => {
     [Errors.InternalServerError]: 500,
   };
 
-  res.status(Status[err.name] || 500).json({
-    status: "error",
-    message: err.message,
-  });
+  res.status(Status[err.name] || 500).json(err.message);
 };
 
 module.exports = {

@@ -18,10 +18,7 @@ const getClientById = async (req, res, next) => {
       error.name = Errors.NotFound;
       return next(error);
     }
-    res.json({
-      status: "success",
-      data: match,
-    });
+    res.json(match);
   } catch (error) {
     next(error);
   }
@@ -63,6 +60,7 @@ const postClientLogin = async (req, res, next) => {
     }
     //generate JWT
     const claims = {
+      id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
@@ -75,13 +73,11 @@ const postClientLogin = async (req, res, next) => {
       }
 
       res.json({
-        status: "success",
-        data: {
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          token,
-        },
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token,
       });
     });
   } catch (error) {
