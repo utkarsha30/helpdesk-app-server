@@ -19,9 +19,7 @@ const authenticate = (req, res, next) => {
 const authorize = (...roles) => {
   return (req, res, next) => {
     // middleware
-    console.log(roles);
     const { role } = res.locals.claims;
-    console.log("role", role);
     if (!roles.includes(role)) {
       const err = new Error("You do not have sufficient privileges");
       err.name = Errors.Forbidden;

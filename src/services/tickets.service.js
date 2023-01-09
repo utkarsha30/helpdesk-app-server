@@ -17,10 +17,14 @@ const updateTicket = (id, ticketDetails) => {
   });
 };
 const postComment = (id, ticketDetails) => {
-  return Tickets.findByIdAndUpdate(id, ticketDetails, {
-    returnOriginal: false,
-    runValidators: true,
-  });
+  return Tickets.findByIdAndUpdate(
+    id,
+    { $push: ticketDetails },
+    {
+      returnOriginal: false,
+      runValidators: true,
+    }
+  );
 };
 const deleteTicket = (id) => {
   return Tickets.findByIdAndDelete(id);

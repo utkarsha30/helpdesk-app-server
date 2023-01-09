@@ -63,6 +63,7 @@ const postEmployeeLogin = async (req, res, next) => {
     }
     //generate JWT
     const claims = {
+      id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
@@ -75,13 +76,11 @@ const postEmployeeLogin = async (req, res, next) => {
       }
 
       res.json({
-        status: "success",
-        data: {
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          token,
-        },
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token,
       });
     });
   } catch (error) {

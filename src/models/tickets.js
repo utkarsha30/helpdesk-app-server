@@ -35,11 +35,10 @@ const ticketsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",
   },
-  comment: [
+  comments: [
     {
       name: String,
-      commentTitle: String,
-      commentDescription: String,
+      comment: String,
     },
   ],
 });

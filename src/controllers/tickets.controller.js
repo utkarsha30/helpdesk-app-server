@@ -38,10 +38,7 @@ const postNewTicket = async (req, res, next) => {
   }
   try {
     const newTicket = await TicketsService.postNewTicket(req.body);
-    res.status(201).json({
-      status: 201,
-      data: newTicket,
-    });
+    res.status(201).json(newTicket);
   } catch (error) {
     next(error);
   }
@@ -63,10 +60,7 @@ const updateTicket = async (req, res, next) => {
 
       return next(error);
     }
-    res.json({
-      status: "success",
-      data: updatedTicket,
-    });
+    res.json(updatedTicket);
   } catch (error) {
     next(error);
   }
@@ -91,10 +85,7 @@ const postComment = async (req, res, next) => {
 
       return next(error);
     }
-    res.json({
-      status: "success",
-      data: postComment,
-    });
+    res.json(postComment);
   } catch (error) {
     next(error);
   }

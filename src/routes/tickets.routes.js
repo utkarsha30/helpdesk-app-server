@@ -14,7 +14,7 @@ router.post(
 router.patch(
   "/:id",
   authenticate,
-  authorize("agent", "admin"),
+  authorize("client", "agent", "admin"),
   TicketsCtrl.updateTicket
 );
 router.patch(
