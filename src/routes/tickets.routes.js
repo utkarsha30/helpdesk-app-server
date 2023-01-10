@@ -5,11 +5,18 @@ const router = Router();
 
 router.get("/", TicketsCtrl.getAllTickets);
 router.get("/:id", TicketsCtrl.getTicketById);
+router.get("/:id/summary", TicketsCtrl.getClientTicketsSummary);
 router.post(
   "/add",
   authenticate,
   authorize("client"),
   TicketsCtrl.postNewTicket
+);
+router.patch(
+  "/add/:id/attachments",
+  authenticate,
+  authorize("client"),
+  TicketsCtrl.postAttachments
 );
 router.patch(
   "/:id",

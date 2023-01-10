@@ -3,10 +3,18 @@ const express = require("express");
 var bodyParser = require("body-parser");
 const { connect } = require("./db/init");
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
+const path = require("path");
 //create application object
 const app = express();
 //to avoid cors policy error
 app.use(cors({ origin: "*" }));
+// to allow file upload for the cloudnary
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 //for request body data
 app.use(express.json());
 //whenever the the request body contains form data,  express will make that data available on req body

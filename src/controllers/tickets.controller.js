@@ -1,5 +1,16 @@
 const TicketsService = require("../services/tickets.service");
+const cloudinary = require("cloudinary").v2;
 const { Errors } = require("../constants");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRETE,
+});
+console.log(process.env.CLOUD_NAME);
+console.log(process.env.API_KEY);
+console.log(process.env.API_SECRETE);
+
 const getAllTickets = async (req, res, next) => {
   try {
     const tickets = await TicketsService.getAllTickets();
@@ -7,6 +18,15 @@ const getAllTickets = async (req, res, next) => {
       status: "success",
       data: tickets,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+const getClientTicketsSummary = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const count = await TicketsService.getClientTicketsSummary(id);
+    res.json(count);
   } catch (error) {
     next(error);
   }
@@ -24,6 +44,31 @@ const getTicketById = async (req, res, next) => {
       status: "success",
       data: match,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+const postAttachments = async (req, res, next) => {
+  try {
+    console.log("called");
+    const { id } = req.params;
+    const file = req.files.attachments;
+    console.log("file check", file);
+    const result = await cloudinary.uploader.upload(
+      file.tempFilePath,
+      { folder: "attachments", public_id: file.name },
+      async (err, image) => {
+        console.log("check");
+        if (err) {
+          console.log(err);
+        }
+        console.log(image);
+      }
+    );
+    const updatedDetails = await TicketsService.postAttachments(id, {
+      attachments: result.secure_url,
+    });
+    res.status(201).json(updatedDetails);
   } catch (error) {
     next(error);
   }
@@ -114,4 +159,6 @@ module.exports = {
   updateTicket,
   postComment,
   deleteTicket,
+  getClientTicketsSummary,
+  postAttachments,
 };
