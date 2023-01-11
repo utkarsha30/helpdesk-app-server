@@ -9,7 +9,12 @@ router.get(
   authorize("admin"),
   EmployeesCtrl.getAllAgentEmployees
 );
-router.get("/:id", EmployeesCtrl.getEmployeeById);
+router.get(
+  "/:id",
+  authenticate,
+  authorize("agent"),
+  EmployeesCtrl.getEmployeeById
+);
 router.post("/register", EmployeesCtrl.postNewEmployeeDetails);
 router.post("/login", EmployeesCtrl.postEmployeeLogin);
 module.exports = router;

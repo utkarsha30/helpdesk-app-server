@@ -1,7 +1,7 @@
 {
   "name": "helpdesk-app-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a help desk project created to raise and manage tickets",
   "main": "src/index.js",
   "scripts": {
     "start": "node .",
@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Utkarsha Kshirsagar",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",

@@ -3,7 +3,7 @@ const TicketsCtrl = require("../controllers/tickets.controller");
 const { authenticate, authorize } = require("../middleware/auth");
 const router = Router();
 
-router.get("/", TicketsCtrl.getAllTickets);
+router.get("/", authenticate, authorize("admin"), TicketsCtrl.getAllTickets);
 router.get("/:id", TicketsCtrl.getTicketById);
 router.get("/:id/summary", TicketsCtrl.getClientTicketsSummary);
 router.post(

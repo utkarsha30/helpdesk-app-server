@@ -10,10 +10,7 @@ const getEmployeeById = async (req, res, next) => {
       error.name = Errors.NotFound;
       return next(error);
     }
-    res.json({
-      status: "success",
-      data: match,
-    });
+    res.json(match);
   } catch (error) {
     next(error);
   }

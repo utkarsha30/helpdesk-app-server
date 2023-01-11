@@ -14,10 +14,7 @@ console.log(process.env.API_SECRETE);
 const getAllTickets = async (req, res, next) => {
   try {
     const tickets = await TicketsService.getAllTickets();
-    res.json({
-      status: "success",
-      data: tickets,
-    });
+    res.json(tickets);
   } catch (error) {
     next(error);
   }
@@ -97,8 +94,27 @@ const updateTicket = async (req, res, next) => {
     error.name = Errors.BadRequest;
     return next(error);
   }
+  const { title, description, category, client } = req.body;
+  const file = req.files.attachments;
   try {
-    const updatedTicket = await TicketsService.updateTicket(id, req.body);
+    const result = await cloudinary.uploader.upload(
+      file.tempFilePath,
+      { folder: "attachments", public_id: file.name },
+      async (err, image) => {
+        console.log("check");
+        if (err) {
+          console.log(err);
+        }
+        console.log(image);
+      }
+    );
+    const updatedTicket = await TicketsService.updateTicket(id, {
+      title,
+      description,
+      category,
+      client,
+      attachments: result.secure_url,
+    });
     if (updatedTicket === null) {
       const error = new Error(`A ticket with id = ${id} does not exist`);
       error.name = Errors.NotFound;
