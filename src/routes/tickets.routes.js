@@ -4,8 +4,25 @@ const { authenticate, authorize } = require("../middleware/auth");
 const router = Router();
 
 router.get("/", authenticate, authorize("admin"), TicketsCtrl.getAllTickets);
+router.get(
+  "/count",
+  authenticate,
+  authorize("admin"),
+  TicketsCtrl.getAdminTicketCount
+);
 router.get("/:id", TicketsCtrl.getTicketById);
-router.get("/:id/summary", TicketsCtrl.getClientTicketsSummary);
+router.get(
+  "/:id/summary",
+  authenticate,
+  authorize("client"),
+  TicketsCtrl.getClientTicketsSummary
+);
+router.get(
+  "/:id/count",
+  authenticate,
+  authorize("agent"),
+  TicketsCtrl.getAgentTicketCount
+);
 router.post(
   "/add",
   authenticate,

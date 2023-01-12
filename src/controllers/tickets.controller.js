@@ -19,6 +19,23 @@ const getAllTickets = async (req, res, next) => {
     next(error);
   }
 };
+const getAgentTicketCount = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const count = await TicketsService.getAgentTicketCount(id);
+    res.json(count);
+  } catch (error) {
+    next(error);
+  }
+};
+const getAdminTicketCount = async (req, res, next) => {
+  try {
+    const count = await TicketsService.getAdminTicketCount();
+    res.json(count);
+  } catch (error) {
+    next(error);
+  }
+};
 const getClientTicketsSummary = async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -85,6 +102,49 @@ const postNewTicket = async (req, res, next) => {
     next(error);
   }
 };
+// const updateTicket = async (req, res, next) => {
+//   const { id } = req.params;
+//   if (Object.keys(req.body).length === 0) {
+//     const error = new Error(
+//       `Request body is missing, and needs to have details of ticket to be updated`
+//     );
+//     error.name = Errors.BadRequest;
+//     return next(error);
+//   }
+//   const { title, description, category, client, attachments } = req.body;
+
+//   const file = req.files.attachments;
+
+//   try {
+//     const result = await cloudinary.uploader.upload(
+//       file.tempFilePath,
+//       { folder: "attachments", public_id: file.name },
+//       async (err, image) => {
+//         console.log("check");
+//         if (err) {
+//           console.log(err);
+//         }
+//         console.log(image);
+//       }
+//     );
+//     const updatedTicket = await TicketsService.updateTicket(id, {
+//       title,
+//       description,
+//       category,
+//       client,
+//       attachments: result.secure_url,
+//     });
+//     if (updatedTicket === null) {
+//       const error = new Error(`A ticket with id = ${id} does not exist`);
+//       error.name = Errors.NotFound;
+
+//       return next(error);
+//     }
+//     res.json(updatedTicket);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 const updateTicket = async (req, res, next) => {
   const { id } = req.params;
   if (Object.keys(req.body).length === 0) {
@@ -94,27 +154,8 @@ const updateTicket = async (req, res, next) => {
     error.name = Errors.BadRequest;
     return next(error);
   }
-  const { title, description, category, client } = req.body;
-  const file = req.files.attachments;
   try {
-    const result = await cloudinary.uploader.upload(
-      file.tempFilePath,
-      { folder: "attachments", public_id: file.name },
-      async (err, image) => {
-        console.log("check");
-        if (err) {
-          console.log(err);
-        }
-        console.log(image);
-      }
-    );
-    const updatedTicket = await TicketsService.updateTicket(id, {
-      title,
-      description,
-      category,
-      client,
-      attachments: result.secure_url,
-    });
+    const updatedTicket = await TicketsService.updateTicket(id, req.body);
     if (updatedTicket === null) {
       const error = new Error(`A ticket with id = ${id} does not exist`);
       error.name = Errors.NotFound;
@@ -177,4 +218,6 @@ module.exports = {
   deleteTicket,
   getClientTicketsSummary,
   postAttachments,
+  getAdminTicketCount,
+  getAgentTicketCount,
 };

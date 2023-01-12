@@ -32,6 +32,46 @@ const postComment = (id, ticketDetails) => {
     }
   );
 };
+const getAgentTicketCount = (id) => {
+  const _id = mongoose.Types.ObjectId(id);
+  return Tickets.aggregate([
+    {
+      $match: {
+        agent: _id,
+      },
+    },
+    {
+      $group: {
+        _id: "$status",
+        count: {
+          $count: {},
+        },
+      },
+    },
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ]);
+};
+const getAdminTicketCount = () => {
+  return Tickets.aggregate([
+    {
+      $group: {
+        _id: "$status",
+        count: {
+          $count: {},
+        },
+      },
+    },
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ]);
+};
 const getClientTicketsSummary = (id) => {
   const _id = mongoose.Types.ObjectId(id);
   return Tickets.aggregate([
@@ -67,4 +107,6 @@ module.exports = {
   deleteTicket,
   getClientTicketsSummary,
   postAttachments,
+  getAdminTicketCount,
+  getAgentTicketCount,
 };
