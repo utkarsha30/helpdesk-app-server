@@ -18,10 +18,7 @@ postNewFAQ = async (req, res, next) => {
   }
   try {
     const newFAQ = await FAQService.postNewFAQ(req.body);
-    res.status(201).json({
-      status: "success",
-      data: newFAQ,
-    });
+    res.status(201).json(newFAQ);
   } catch (error) {
     next(error);
   }

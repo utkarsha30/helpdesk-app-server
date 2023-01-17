@@ -35,10 +35,7 @@ const postNewCategory = async (req, res, next) => {
   }
   try {
     const newCategory = await CategoriesService.postNewCategory(req.body);
-    res.status(201).json({
-      status: "success",
-      data: newCategory,
-    });
+    res.status(201).json(newCategory);
   } catch (error) {
     next(error);
   }
