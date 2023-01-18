@@ -6,7 +6,7 @@ const router = Router();
 router.get(
   "/agents",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "client"),
   EmployeesCtrl.getAllAgentEmployees
 );
 router.get(

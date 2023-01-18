@@ -6,7 +6,20 @@ const getEmployeeById = (_id) => {
   return Employee.findById(_id).populate("tickets");
 };
 const getAllAgentEmployees = () => {
-  return Employee.find({ role: "agent" });
+  return Employee.aggregate([
+    {
+      $match: {
+        role: "agent",
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        email: 1,
+      },
+    },
+  ]);
 };
 const postNewEmployeeDetails = (bodyDetails) => {
   return Employee.create(bodyDetails);
