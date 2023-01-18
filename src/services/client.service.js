@@ -2,7 +2,15 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Client = mongoose.model("Client");
 const getAllClients = () => {
-  return Client.find();
+  return Client.aggregate([
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        email: 1,
+      },
+    },
+  ]);
 };
 const getClientById = (_id) => {
   return Client.findById(_id).populate("tickets");

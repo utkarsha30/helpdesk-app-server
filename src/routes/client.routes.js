@@ -3,12 +3,7 @@ const ClientCtrl = require("../controllers/client.controller");
 const { authenticate, authorize } = require("../middleware/auth");
 const router = Router();
 
-router.get(
-  "/allclients",
-  authenticate,
-  authorize("admin"),
-  ClientCtrl.getAllClients
-);
+router.get("/allclients", ClientCtrl.getAllClients);
 router.get("/:id", authenticate, authorize("client"), ClientCtrl.getClientById);
 
 router.post("/register", ClientCtrl.postClientDetails);
