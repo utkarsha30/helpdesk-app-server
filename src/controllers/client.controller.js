@@ -35,10 +35,7 @@ postClientDetails = async (req, res, next) => {
     const newClient = await ClientService.postClientDetails(req.body);
     const newClientObj = newClient.toObject();
     delete newClientObj.password;
-    res.status(201).json({
-      status: "success",
-      data: newClientObj,
-    });
+    res.status(201).json(newClientObj);
   } catch (error) {
     return next(error);
   }
