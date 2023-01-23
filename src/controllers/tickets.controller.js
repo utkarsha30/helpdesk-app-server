@@ -201,10 +201,7 @@ const deleteTicket = async (req, res, next) => {
       error.name = Errors.NotFound;
       return next(error);
     }
-    res.json({
-      status: "success",
-      data: null,
-    });
+    res.json(deletedTicket);
   } catch (error) {
     next(error);
   }
