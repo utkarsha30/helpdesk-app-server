@@ -29,12 +29,12 @@ router.post(
   authorize("client"),
   TicketsCtrl.postNewTicket
 );
-router.patch(
-  "/add/:id/attachments",
-  authenticate,
-  authorize("client"),
-  TicketsCtrl.postAttachments
-);
+// router.patch(
+//   "/add/:id/attachments",
+//   authenticate,
+//   authorize("client"),
+//   TicketsCtrl.postAttachments
+// );
 router.patch(
   "/:id",
   authenticate,

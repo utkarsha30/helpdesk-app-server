@@ -21,5 +21,17 @@ router.get(
   authorize("admin", "agent"),
   CategoriesCtrl.getCategoryById
 );
+router.patch(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  CategoriesCtrl.updateCategory
+);
+router.delete(
+  "/:id",
+  authenticate,
+  authorize("admin"),
+  CategoriesCtrl.deleteCategory
+);
 
 module.exports = router;

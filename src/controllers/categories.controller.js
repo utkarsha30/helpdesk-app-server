@@ -40,8 +40,50 @@ const postNewCategory = async (req, res, next) => {
     next(error);
   }
 };
+const deleteCategory = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deletedCategory = await CategoriesService.deleteCategory(id);
+    if (deletedCategory === null) {
+      const error = new Error(`The Category with id = ${id} does not exist`);
+      error.name = Errors.NotFound;
+      return next(error);
+    }
+    res.json(deletedCategory);
+  } catch (error) {
+    next(error);
+  }
+};
+const updateCategory = async (req, res, next) => {
+  const { id } = req.params;
+  if (Object.keys(req.body).length === 0) {
+    const error = new Error(
+      `Request body is missing, and needs to have details of category to be updated`
+    );
+    error.name = Errors.BadRequest;
+    return next(error);
+  }
+  try {
+    const updatedCategory = await CategoriesService.updateCategory(
+      id,
+      req.body
+    );
+    if (updatedCategory === null) {
+      const error = new Error(`A Category with id = ${id} does not exist`);
+      error.name = Errors.NotFound;
+
+      return next(error);
+    }
+    res.json(updatedCategory);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllCategories,
   postNewCategory,
   getCategoryById,
+  deleteCategory,
+  updateCategory,
 };

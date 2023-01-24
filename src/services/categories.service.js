@@ -9,8 +9,19 @@ const getAllCategories = () => {
 const getCategoryById = (_id) => {
   return Categories.findById(_id).populate("tickets");
 };
+const deleteCategory = (id) => {
+  return Categories.findByIdAndDelete(id);
+};
+const updateCategory = (id, categorytDetails) => {
+  return Categories.findByIdAndUpdate(id, categorytDetails, {
+    returnOriginal: false,
+    runValidators: true,
+  });
+};
 module.exports = {
   postNewCategory,
   getCategoryById,
   getAllCategories,
+  deleteCategory,
+  updateCategory,
 };

@@ -10,12 +10,12 @@ const getTicketById = (_id) => {
 const postNewTicket = (bodyDetails) => {
   return Tickets.create(bodyDetails);
 };
-const postAttachments = (id, image) => {
-  return Tickets.findByIdAndUpdate(id, image, {
-    returnOriginal: false,
-    runValidators: true,
-  });
-};
+// const postAttachments = (id, image) => {
+//   return Tickets.findByIdAndUpdate(id, image, {
+//     returnOriginal: false,
+//     runValidators: true,
+//   });
+// };
 const updateTicket = (id, ticketDetails) => {
   return Tickets.findByIdAndUpdate(id, ticketDetails, {
     returnOriginal: false,
@@ -106,7 +106,7 @@ module.exports = {
   postComment,
   deleteTicket,
   getClientTicketsSummary,
-  postAttachments,
+  // postAttachments,
   getAdminTicketCount,
   getAgentTicketCount,
 };

@@ -23,7 +23,22 @@ postNewFAQ = async (req, res, next) => {
     next(error);
   }
 };
+const deleteFAQ = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deletedFAQ = await FAQService.deleteFAQ(id);
+    if (deletedFAQ === null) {
+      const error = new Error(`The Category with id = ${id} does not exist`);
+      error.name = Errors.NotFound;
+      return next(error);
+    }
+    res.json(deletedFAQ);
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   postNewFAQ,
   getAllFAQS,
+  deleteFAQ,
 };

@@ -54,50 +54,95 @@ const getTicketById = async (req, res, next) => {
       error.name = Errors.NotFound;
       return next(error);
     }
-    res.json({
-      status: "success",
-      data: match,
-    });
+    res.json(match);
   } catch (error) {
     next(error);
   }
 };
-const postAttachments = async (req, res, next) => {
-  try {
-    console.log("called");
-    const { id } = req.params;
-    const file = req.files.attachments;
-    console.log("file check", file);
-    const result = await cloudinary.uploader.upload(
-      file.tempFilePath,
-      { folder: "attachments", public_id: file.name },
-      async (err, image) => {
-        console.log("check");
-        if (err) {
-          console.log(err);
-        }
-        console.log(image);
-      }
-    );
-    const updatedDetails = await TicketsService.postAttachments(id, {
-      attachments: result.secure_url,
-    });
-    res.status(201).json(updatedDetails);
-  } catch (error) {
-    next(error);
-  }
-};
+// const postAttachments = async (req, res, next) => {
+//   try {
+//     console.log("called");
+//     const { id } = req.params;
+//     const file = req.files.attachments;
+//     console.log("file check", file);
+//     const result = await cloudinary.uploader.upload(
+//       file.tempFilePath,
+//       { folder: "attachments", public_id: file.name },
+//       async (err, image) => {
+//         console.log("check");
+//         if (err) {
+//           console.log(err);
+//         }
+//         console.log(image);
+//       }
+//     );
+//     const updatedDetails = await TicketsService.postAttachments(id, {
+//       attachments: result.secure_url,
+//     });
+//     res.status(201).json(updatedDetails);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+// const postNewTicket = async (req, res, next) => {
+//   if (Object.keys(req.body).length === 0) {
+//     const error = new Error(
+//       `Request body is missing, and needs to have for creating new ticket`
+//     );
+//     error.name = Errors.BadRequest;
+//     return next(error);
+//   }
+//   try {
+//     const newTicket = await TicketsService.postNewTicket(req.body);
+//     res.status(201).json(newTicket);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 const postNewTicket = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     const error = new Error(
-      `Request body is missing, and needs to have for creating new ticket`
+      `Request body is missing, and needs to have details of ticket to be updated`
     );
     error.name = Errors.BadRequest;
     return next(error);
   }
+  const { title, description, category, client, attachments } = req.body;
+
   try {
-    const newTicket = await TicketsService.postNewTicket(req.body);
-    res.status(201).json(newTicket);
+    if (attachments === "null") {
+      const newTicket = await TicketsService.postNewTicket({
+        title,
+        description,
+        category,
+        client,
+      });
+
+      res.json(newTicket);
+    } else {
+      const file = req.files.attachments;
+      console.log("attachments", file);
+      const result = await cloudinary.uploader.upload(
+        file.tempFilePath,
+        { folder: "attachments", public_id: file.name },
+        async (err, image) => {
+          console.log("check");
+          if (err) {
+            console.log(err);
+          }
+          console.log(image);
+        }
+      );
+      const newTicket = await TicketsService.postNewTicket({
+        title,
+        description,
+        category,
+        client,
+        attachments: result.secure_url,
+      });
+
+      res.json(newTicket);
+    }
   } catch (error) {
     next(error);
   }
@@ -214,7 +259,7 @@ module.exports = {
   postComment,
   deleteTicket,
   getClientTicketsSummary,
-  postAttachments,
+  // postAttachments,
   getAdminTicketCount,
   getAgentTicketCount,
 };

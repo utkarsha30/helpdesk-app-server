@@ -5,4 +5,5 @@ const { authenticate, authorize } = require("../middleware/auth");
 
 router.get("/", FAQCtrl.getAllFAQS);
 router.post("/add", authenticate, authorize("admin"), FAQCtrl.postNewFAQ);
+router.delete("/:id", authenticate, authorize("admin"), FAQCtrl.deleteFAQ);
 module.exports = router;
