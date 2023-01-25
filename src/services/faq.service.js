@@ -10,8 +10,15 @@ const postNewFAQ = (bodyDetails) => {
 const deleteFAQ = (id) => {
   return FAQ.findByIdAndDelete(id);
 };
+const updateFAQ = (id, faqtDetails) => {
+  return FAQ.findByIdAndUpdate(id, faqtDetails, {
+    returnOriginal: false,
+    runValidators: true,
+  });
+};
 module.exports = {
   postNewFAQ,
   getAllFAQS,
   deleteFAQ,
+  updateFAQ,
 };
