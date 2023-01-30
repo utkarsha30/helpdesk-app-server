@@ -15,6 +15,18 @@ const getAllClients = () => {
 const getClientById = (_id) => {
   return Client.findById(_id).populate("tickets");
 };
+const getClientEmailId = (id) => {
+  const clientId = mongoose.Types.ObjectId(id);
+  return Client.findOne(
+    {
+      _id: clientId,
+    },
+    {
+      _id: 0,
+      email: 1,
+    }
+  );
+};
 const postClientDetails = (bodyDetails) => {
   return Client.create(bodyDetails);
 };
@@ -38,4 +50,5 @@ module.exports = {
   postClientDetails,
   getClientById,
   validateUser,
+  getClientEmailId,
 };

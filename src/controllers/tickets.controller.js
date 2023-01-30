@@ -1,5 +1,8 @@
 const TicketsService = require("../services/tickets.service");
+const ClientService = require("../services/client.service");
 const cloudinary = require("cloudinary").v2;
+const nodemailer = require("nodemailer");
+
 const { Errors } = require("../constants");
 
 cloudinary.config({
@@ -10,7 +13,13 @@ cloudinary.config({
 console.log(process.env.CLOUD_NAME);
 console.log(process.env.API_KEY);
 console.log(process.env.API_SECRETE);
-
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASS,
+  },
+});
 const getAllTickets = async (req, res, next) => {
   try {
     const tickets = await TicketsService.getAllTickets();
@@ -117,6 +126,16 @@ const postNewTicket = async (req, res, next) => {
         category,
         client,
       });
+      const clientEmail = await ClientService.getClientEmailId(client);
+      const email = clientEmail.email;
+      console.log("clientEmail", clientEmail);
+      console.log("Email", clientEmail.email);
+      var mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: email,
+        subject: "New Ticket created",
+        html: `New Ticket ${newTicket._id} was created`,
+      };
 
       res.json(newTicket);
     } else {
@@ -140,9 +159,21 @@ const postNewTicket = async (req, res, next) => {
         client,
         attachments: result.secure_url,
       });
+      const clientEmail = await ClientService.getClientEmailId(client);
+      const email = clientEmail.email;
+      console.log("clientEmail", clientEmail);
+      console.log("Email", clientEmail.email);
+      var mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: email,
+        subject: "New Ticket created",
+        html: `New Ticket ${newTicket._id} was created`,
+      };
 
       res.json(newTicket);
     }
+
+    const info = await transporter.sendMail(mailOptions);
   } catch (error) {
     next(error);
   }
