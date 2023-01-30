@@ -26,12 +26,12 @@ const employeeSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-const emailPat = /^[A-Za-z0-9_\.]+@fynd\.com$/;
+// const emailPat = /^[A-Za-z0-9_\.]+@fynd\.com$/;
 const passwordPat = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/;
 
-employeeSchema.path("email").validate(function (value) {
-  return emailPat.test(value);
-}, "Email should be fynd emailId");
+// employeeSchema.path("email").validate(function (value) {
+//   return emailPat.test(value);
+// }, "Email should be fynd emailId");
 
 employeeSchema.path("password").validate(function (value) {
   return passwordPat.test(value);

@@ -21,6 +21,19 @@ const getAllAgentEmployees = () => {
     },
   ]);
 };
+const getAgentEmailId = (id) => {
+  const agentId = mongoose.Types.ObjectId(id);
+  return Employee.findOne(
+    {
+      _id: agentId,
+    },
+    {
+      _id: 0,
+      email: 1,
+      name: 1,
+    }
+  );
+};
 const postNewEmployeeDetails = (bodyDetails) => {
   return Employee.create(bodyDetails);
 };
@@ -45,4 +58,5 @@ module.exports = {
   getAllAgentEmployees,
   postNewEmployeeDetails,
   validateUser,
+  getAgentEmailId,
 };

@@ -1,5 +1,7 @@
 const TicketsService = require("../services/tickets.service");
 const ClientService = require("../services/client.service");
+const EmployeeService = require("../services/employees.service");
+const { authorize } = require("../middleware/auth");
 const cloudinary = require("cloudinary").v2;
 const nodemailer = require("nodemailer");
 
@@ -158,8 +160,6 @@ const postNewTicket = async (req, res, next) => {
     const clientEmail = await ClientService.getClientEmailId(client);
     const email = clientEmail.email;
     const name = clientEmail.name;
-    console.log("clientEmail", clientEmail);
-    console.log("Email", clientEmail.email);
     var mailOptions = {
       from: process.env.AUTH_EMAIL,
       to: email,
@@ -201,6 +201,66 @@ const updateTicket = async (req, res, next) => {
   }
   try {
     const updatedTicket = await TicketsService.updateTicket(id, req.body);
+    const clientId = updatedTicket.client;
+    const agentId = updatedTicket.agent;
+    const clientInfo = await ClientService.getClientEmailId(clientId);
+    const clientEmail = clientInfo.email;
+    const clientName = clientInfo.name;
+
+    if (agentId) {
+      const agentInfo = await EmployeeService.getAgentEmailId(agentId);
+      const agentEmail = agentInfo.email;
+      console.log("Agent meail", emailAgent);
+      var mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: clientEmail,
+        cc: agentEmail,
+        subject: `Update in ticket ${updatedTicket._id}`,
+        html: `
+        <div>
+        <h1 style="color:#472673">Helpdesk App </h1>
+        <hr/>
+        <p>Hello ${clientName},</p>
+        <p>There is an update in your ticket no is : ${updatedTicket._id}</p>
+        <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
+      
+      <p>Regards,<br/>
+        Helpdesk Team<br/>
+        <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
+        </p>
+        <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
+        <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
+        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2020 Utkarsha Kshirsagar. All rights reserved.
+        <div>
+        </div>
+        `,
+      };
+    } else {
+      var mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: clientEmail,
+        subject: `Update in ticket ${updatedTicket._id}`,
+        html: `
+          <div>
+          <h1 style="color:#472673">Helpdesk App </h1>
+          <hr/>
+          <p>Hello ${clientName},</p>
+          <p>There is an update in your ticket no is : ${updatedTicket._id}</p>
+          <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
+        
+        <p>Regards,<br/>
+          Helpdesk Team<br/>
+          <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
+          </p>
+          <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
+          <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
+          This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2020 Utkarsha Kshirsagar. All rights reserved.
+          <div>
+          </div>
+          `,
+      };
+    }
+    const info = await transporter.sendMail(mailOptions);
     if (updatedTicket === null) {
       const error = new Error(`A ticket with id = ${id} does not exist`);
       error.name = Errors.NotFound;
