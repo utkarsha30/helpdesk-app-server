@@ -24,6 +24,7 @@ const getClientEmailId = (id) => {
     {
       _id: 0,
       email: 1,
+      name: 1,
     }
   );
 };

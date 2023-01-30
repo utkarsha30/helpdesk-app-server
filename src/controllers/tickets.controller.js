@@ -119,6 +119,7 @@ const postNewTicket = async (req, res, next) => {
   const { title, description, category, client, attachments } = req.body;
 
   try {
+    let ticketId = "";
     if (attachments === "null") {
       const newTicket = await TicketsService.postNewTicket({
         title,
@@ -126,16 +127,7 @@ const postNewTicket = async (req, res, next) => {
         category,
         client,
       });
-      const clientEmail = await ClientService.getClientEmailId(client);
-      const email = clientEmail.email;
-      console.log("clientEmail", clientEmail);
-      console.log("Email", clientEmail.email);
-      var mailOptions = {
-        from: process.env.AUTH_EMAIL,
-        to: email,
-        subject: "New Ticket created",
-        html: `New Ticket ${newTicket._id} was created`,
-      };
+      ticketId = newTicket._id;
 
       res.json(newTicket);
     } else {
@@ -159,68 +151,45 @@ const postNewTicket = async (req, res, next) => {
         client,
         attachments: result.secure_url,
       });
-      const clientEmail = await ClientService.getClientEmailId(client);
-      const email = clientEmail.email;
-      console.log("clientEmail", clientEmail);
-      console.log("Email", clientEmail.email);
-      var mailOptions = {
-        from: process.env.AUTH_EMAIL,
-        to: email,
-        subject: "New Ticket created",
-        html: `New Ticket ${newTicket._id} was created`,
-      };
+      ticketId = newTicket._id;
 
       res.json(newTicket);
     }
+    const clientEmail = await ClientService.getClientEmailId(client);
+    const email = clientEmail.email;
+    const name = clientEmail.name;
+    console.log("clientEmail", clientEmail);
+    console.log("Email", clientEmail.email);
+    var mailOptions = {
+      from: process.env.AUTH_EMAIL,
+      to: email,
+      subject: "New Ticket created",
+      html: `
+        <div>
+        <h1 style="color:#472673">Helpdesk App </h1>
+        <hr/>
+        <p>Hello ${name},</p>
+        <p>Thankyou for getting in touch with us<br>
+        Your ticket no is : ${ticketId}</p>
+        <p>  We will respond to your ticket by end of next business day (excluding weekends and public holidays); you are requested not to follow up until then.</p>
+      
+      <p>Regards,<br/>
+        Helpdesk Team<br/>
+        <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
+        </p>
+        <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
+        <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
+        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2020 Utkarsha Kshirsagar. All rights reserved.
+        <div>
+        </div>
+        `,
+    };
 
     const info = await transporter.sendMail(mailOptions);
   } catch (error) {
     next(error);
   }
 };
-// const updateTicket = async (req, res, next) => {
-//   const { id } = req.params;
-//   if (Object.keys(req.body).length === 0) {
-//     const error = new Error(
-//       `Request body is missing, and needs to have details of ticket to be updated`
-//     );
-//     error.name = Errors.BadRequest;
-//     return next(error);
-//   }
-//   const { title, description, category, client, attachments } = req.body;
-
-//   const file = req.files.attachments;
-
-//   try {
-//     const result = await cloudinary.uploader.upload(
-//       file.tempFilePath,
-//       { folder: "attachments", public_id: file.name },
-//       async (err, image) => {
-//         console.log("check");
-//         if (err) {
-//           console.log(err);
-//         }
-//         console.log(image);
-//       }
-//     );
-//     const updatedTicket = await TicketsService.updateTicket(id, {
-//       title,
-//       description,
-//       category,
-//       client,
-//       attachments: result.secure_url,
-//     });
-//     if (updatedTicket === null) {
-//       const error = new Error(`A ticket with id = ${id} does not exist`);
-//       error.name = Errors.NotFound;
-
-//       return next(error);
-//     }
-//     res.json(updatedTicket);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 const updateTicket = async (req, res, next) => {
   const { id } = req.params;
   if (Object.keys(req.body).length === 0) {
