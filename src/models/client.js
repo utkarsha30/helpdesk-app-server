@@ -39,7 +39,7 @@ clientSchema.path("password").validate(function (value) {
 clientSchema.virtual("tickets", {
   ref: "Tickets",
   localField: "_id",
-  foreignField: "client", // the field in the other collection (Topic) that references a document in this collection (Workshop)
+  foreignField: "client",
 });
 
 // decides the "Strength" of the salt (should not be higher as salting will take long time and occupy CPU time (blocking) - nothing else will execute in the app in that time)

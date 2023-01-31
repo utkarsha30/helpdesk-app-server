@@ -179,7 +179,7 @@ const postNewTicket = async (req, res, next) => {
         </p>
         <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
         <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
-        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2020 Utkarsha Kshirsagar. All rights reserved.
+        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
         <div>
         </div>
         `,
@@ -221,7 +221,7 @@ const updateTicket = async (req, res, next) => {
         <h1 style="color:#472673">Helpdesk App </h1>
         <hr/>
         <p>Hello ${clientName},</p>
-        <p>There is an update in your ticket no is : ${updatedTicket._id}</p>
+        <p>There is an update in your ticket no : ${updatedTicket._id}</p>
         <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
       
       <p>Regards,<br/>
@@ -230,7 +230,7 @@ const updateTicket = async (req, res, next) => {
         </p>
         <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
         <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
-        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2020 Utkarsha Kshirsagar. All rights reserved.
+        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
         <div>
         </div>
         `,
@@ -245,7 +245,7 @@ const updateTicket = async (req, res, next) => {
           <h1 style="color:#472673">Helpdesk App </h1>
           <hr/>
           <p>Hello ${clientName},</p>
-          <p>There is an update in your ticket no is : ${updatedTicket._id}</p>
+          <p>There is an update in your ticket no : ${updatedTicket._id}</p>
           <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
         
         <p>Regards,<br/>
@@ -254,7 +254,7 @@ const updateTicket = async (req, res, next) => {
           </p>
           <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
           <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
-          This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2020 Utkarsha Kshirsagar. All rights reserved.
+          This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
           <div>
           </div>
           `,
@@ -291,6 +291,44 @@ const postComment = async (req, res, next) => {
       error.name = Errors.NotFound;
 
       return next(error);
+    }
+    const clientId = postComment.client;
+    const agentId = postComment.agent;
+    console.log(agentId);
+    const clientInfo = await ClientService.getClientEmailId(clientId);
+    const clientEmail = clientInfo.email;
+    const clientName = clientInfo.name;
+
+    if (agentId) {
+      console.log("Insided agent Id");
+      const agentInfo = await EmployeeService.getAgentEmailId(agentId);
+      const agentEmail = agentInfo.email;
+      console.log(agentEmail);
+      var mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: clientEmail,
+        cc: agentEmail,
+        subject: `New Comment added for ticket ${postComment._id}`,
+        html: `
+        <div>
+        <h1 style="color:#472673">Helpdesk App </h1>
+        <hr/>
+        <p>Hello ${clientName},</p>
+        <p>There is a new comment added in your ticket no: ${postComment._id}</p>
+        <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
+      
+      <p>Regards,<br/>
+        Helpdesk Team<br/>
+        <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
+        </p>
+        <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
+        <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
+        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
+        <div>
+        </div>
+        `,
+      };
+      const info = await transporter.sendMail(mailOptions);
     }
     res.json(postComment);
   } catch (error) {

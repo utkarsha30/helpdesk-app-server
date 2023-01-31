@@ -2,10 +2,12 @@ const mongoose = require("mongoose");
 const Tickets = mongoose.model("Tickets");
 
 const getAllTickets = () => {
-  return Tickets.find();
+  return Tickets.find().populate("client", "name").populate("agent", "name");
 };
 const getTicketById = (_id) => {
-  return Tickets.findById(_id);
+  return Tickets.findById(_id)
+    .populate("client", "email")
+    .populate("agent", "name");
 };
 const postNewTicket = (bodyDetails) => {
   return Tickets.create(bodyDetails);
