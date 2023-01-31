@@ -210,7 +210,6 @@ const updateTicket = async (req, res, next) => {
     if (agentId) {
       const agentInfo = await EmployeeService.getAgentEmailId(agentId);
       const agentEmail = agentInfo.email;
-      console.log("Agent meail", emailAgent);
       var mailOptions = {
         from: process.env.AUTH_EMAIL,
         to: clientEmail,
@@ -222,7 +221,7 @@ const updateTicket = async (req, res, next) => {
         <hr/>
         <p>Hello ${clientName},</p>
         <p>There is an update in your ticket no : ${updatedTicket._id}</p>
-        <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
+        <p>Please check for details by login into <a href = "${process.env.WEBSITE_URL}">Helpdesk App</a></p>
       
       <p>Regards,<br/>
         Helpdesk Team<br/>
@@ -246,7 +245,7 @@ const updateTicket = async (req, res, next) => {
           <hr/>
           <p>Hello ${clientName},</p>
           <p>There is an update in your ticket no : ${updatedTicket._id}</p>
-          <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
+          <p>Please check for details by login into <a href = "${process.env.WEBSITE_URL}">Helpdesk App</a></p>
         
         <p>Regards,<br/>
           Helpdesk Team<br/>
@@ -315,7 +314,7 @@ const postComment = async (req, res, next) => {
         <hr/>
         <p>Hello ${clientName},</p>
         <p>There is a new comment added in your ticket no: ${postComment._id}</p>
-        <p>Please check for details by login into <a href = "http://localhost:8080/">Helpdesk App</a></p>
+        <p>Please check for details by login into <a href = "${process.env.WEBSITE_URL}">Helpdesk App</a></p>
       
       <p>Regards,<br/>
         Helpdesk Team<br/>
