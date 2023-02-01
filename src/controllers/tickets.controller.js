@@ -160,9 +160,13 @@ const postNewTicket = async (req, res, next) => {
     const clientEmail = await ClientService.getClientEmailId(client);
     const email = clientEmail.email;
     const name = clientEmail.name;
+    const admin = await EmployeeService.getAdminsEmailId();
+    const adminEmail = admin.email;
+
     var mailOptions = {
       from: process.env.AUTH_EMAIL,
       to: email,
+      cc: adminEmail,
       subject: "New Ticket created",
       html: `
         <div>
@@ -210,36 +214,41 @@ const updateTicket = async (req, res, next) => {
     if (agentId) {
       const agentInfo = await EmployeeService.getAgentEmailId(agentId);
       const agentEmail = agentInfo.email;
-      var mailOptions = {
-        from: process.env.AUTH_EMAIL,
-        to: clientEmail,
-        cc: agentEmail,
-        subject: `Update in ticket ${updatedTicket._id}`,
-        html: `
-        <div>
-        <h1 style="color:#472673">Helpdesk App </h1>
-        <hr/>
-        <p>Hello ${clientName},</p>
-        <p>There is an update in your ticket no : ${updatedTicket._id}</p>
-        <p>Please check for details by login into <a href = "${process.env.WEBSITE_URL}">Helpdesk App</a></p>
-      
-      <p>Regards,<br/>
-        Helpdesk Team<br/>
-        <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
-        </p>
-        <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
-        <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
-        This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
-        <div>
-        </div>
-        `,
-      };
-    } else {
-      var mailOptions = {
-        from: process.env.AUTH_EMAIL,
-        to: clientEmail,
-        subject: `Update in ticket ${updatedTicket._id}`,
-        html: `
+
+      if (updatedTicket.status === "closed") {
+        console.log("inloop");
+        var mailOptions = {
+          from: process.env.AUTH_EMAIL,
+          to: clientEmail,
+          cc: agentEmail,
+          subject: `${updatedTicket._id} has been resolved`,
+          html: `
+          <div>
+          <h1 style="color:#472673">Helpdesk App </h1>
+          <hr/>
+          <p>Hello ${clientName},</p>
+          <p>We have resolved your issue.</p>
+          <p>If you feel your ticket was not resolved correctly, you can reopen the ticket by clicking on the button below. Please do provide reason for reopening your ticket. Please note that if you have a different issue, then you must submit a new ticket</a></p>
+          <button style="background-color:#0070ad;border:0;padding:10px;"> <a href="${process.env.WEBSITE_URL}client" style="text-decoration: none;color: white;" >View Case Status</a></button>
+          <p>Incase the ticket remains closed for next 3 business days, the ticket will be considered resolved completely.</p>        
+          <p>Regards,<br/>
+          Helpdesk Team<br/>
+          <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
+          </p>
+          <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
+          <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
+          This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
+          <div>
+          </div>
+          `,
+        };
+      } else {
+        var mailOptions = {
+          from: process.env.AUTH_EMAIL,
+          to: clientEmail,
+          cc: agentEmail,
+          subject: `Update in ticket ${updatedTicket._id}`,
+          html: `
           <div>
           <h1 style="color:#472673">Helpdesk App </h1>
           <hr/>
@@ -257,7 +266,60 @@ const updateTicket = async (req, res, next) => {
           <div>
           </div>
           `,
-      };
+        };
+      }
+    } else {
+      if (updatedTicket.status === "closed") {
+        var mailOptions = {
+          from: process.env.AUTH_EMAIL,
+          to: clientEmail,
+          cc: agentEmail,
+          subject: `${updatedTicket._id} has been resolved`,
+          html: `
+          <div>
+          <h1 style="color:#472673">Helpdesk App </h1>
+          <hr/>
+          <p>Hello ${clientName},</p>
+          <p>We have resolved your issue.</p>
+          <p>If you feel your ticket was not resolved correctly, you can reopen the ticket by clicking on the button below. Please do provide reason for reopening your ticket. Please note that if you have a different issue, then you must submit a new ticket</a></p>
+          <button style="background-color:#0070ad;border:0;padding:10px;"> <a href="${process.env.WEBSITE_URL}client" style="text-decoration: none;color: white;" >View Case Status</a></button>
+          <p>Incase the ticket remains closed for next 3 business days, the ticket will be considered resolved completely.</p>  
+          <p>Regards,<br/>
+          Helpdesk Team<br/>
+          <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
+          </p>
+          <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
+          <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
+          This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
+          <div>
+          </div>
+          `,
+        };
+      } else {
+        var mailOptions = {
+          from: process.env.AUTH_EMAIL,
+          to: clientEmail,
+          subject: `Update in ticket ${updatedTicket._id}`,
+          html: `
+            <div>
+            <h1 style="color:#472673">Helpdesk App </h1>
+            <hr/>
+            <p>Hello ${clientName},</p>
+            <p>There is an update in your ticket no : ${updatedTicket._id}</p>
+            <p>Please check for details by login into <a href = "${process.env.WEBSITE_URL}">Helpdesk App</a></p>
+          
+          <p>Regards,<br/>
+            Helpdesk Team<br/>
+            <img src="https://drive.google.com/uc?export=view&id=1lYCww2nru9EDySysQbKoMiWhfjbbSpcI" width="50" height="50" />
+            </p>
+            <span style="color:red;"><i> This email has been generated automatically. Please do not reply.</i></span>
+            <div style="background-color: skyblue;font-family: Verdana,Geneva,sans-serif;margin-right: 40px;margin-left: 40px; padding:30px 10px 30px 10px">
+            This message contains information that may be privileged or confidential and is the property of the Helpdesk App. Copyright © 2023 Utkarsha Kshirsagar. All rights reserved.
+            <div>
+            </div>
+            `,
+        };
+      }
     }
     const info = await transporter.sendMail(mailOptions);
     if (updatedTicket === null) {

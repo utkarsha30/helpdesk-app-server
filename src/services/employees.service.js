@@ -34,6 +34,17 @@ const getAgentEmailId = (id) => {
     }
   );
 };
+const getAdminsEmailId = () => {
+  return Employee.findOne(
+    {
+      role: "admin",
+    },
+    {
+      _id: 0,
+      email: 1,
+    }
+  );
+};
 const postNewEmployeeDetails = (bodyDetails) => {
   return Employee.create(bodyDetails);
 };
@@ -59,4 +70,5 @@ module.exports = {
   postNewEmployeeDetails,
   validateUser,
   getAgentEmailId,
+  getAdminsEmailId,
 };
